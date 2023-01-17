@@ -8,10 +8,9 @@ commands:
           name: Install AWS CLI v2
           command: |
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            yum clean all 
-            yum -y install zip unzip
-            unzip awscliv2.zip
-            ./aws/install
+            unzip awscliv2.zip 
+            sudo ./aws/install
+           
   install_ansible:
     description: Install Ansible
     steps:
