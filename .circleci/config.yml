@@ -7,7 +7,8 @@ commands:
       - run:
           name: Install AWS CLI v2
           command: |
-            pip3 install  awscliv2
+            python -m pip install awscliv2
+
           
   install_ansible:
     description: Install Ansible
