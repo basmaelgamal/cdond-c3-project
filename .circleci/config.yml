@@ -8,7 +8,7 @@ commands:
           name: Install AWS CLI v2
           command: |
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            # yum install unzip -y
+
             unzip awscliv2.zip
             sudo ./aws/install
           
@@ -156,13 +156,8 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run:
-          name: Install AWS CLI v2
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            yum install unzip -y
-            unzip awscliv2.zip
-            sudo ./aws/install
+      - install_awscli
+      - run: yum install -y unzip
       - run: yum install -y tar gzip      
       - run:
           name: Ensure back-end infrastructure exists
@@ -226,13 +221,8 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
-      - run:
-          name: Install AWS CLI v2
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            apt-get install unzip
-            unzip awscliv2.zip
-            sudo ./aws/install
+      - install_awscli
+      - run: apt-get install unzip
       - run:
           name: Run migrations
           command: |
