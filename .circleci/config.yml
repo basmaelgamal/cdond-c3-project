@@ -266,6 +266,7 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
+      - install_nodejs
       - run: sudo apt-get install tar gzip -y
       - restore_cache:
           keys: [frontend-build]
