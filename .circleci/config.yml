@@ -418,25 +418,32 @@ jobs:
 
       - revert-migrations        
 
-# cleanup:
-#     docker:
-#       # Docker image here
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Get old stack workflow id
-#           command: |
-#             # your code here
-#             export OldWorkflowID="the id here"
-#             export STACKS=[] #put the list of stacks here
-#       - run:
-#           name: Remove old stacks and files
-#           command: |
-#             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-#             then
-#               # your code here
-#             fi
-
+  cleanup:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+            name: Install dependencies
+            command: |
+              yum -y install tar gzip 
+      - attach_workspace:
+          at: ~/workspace/      
+      - run:
+            name: Remove previos stacks and files
+            command: |
+              cat ~/workspace/OldFlow.txt
+              export OldWorkflowID=$(cat ~/workspace/OldFlow.txt)
+              export CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
+              if [[ "$CurrentWorkflowID" == "$OldWorkflowID" ]]
+              then
+                echo "It's OK, No Previous Stack"
+              else
+                echo "will delete old version"
+                aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+                aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+                aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              fi
 
 workflows:
   default:
@@ -468,5 +475,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - cleanup:
+          requires: [cloudfront-update]
