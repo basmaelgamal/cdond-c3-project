@@ -1,16 +1,16 @@
 version: 2.1
 
 commands:
-  install_awscli:
-    description: Install AWS CLI v2
-    steps:
-      - run:
-          name: Install AWS CLI v2
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  # install_awscli:
+  #   description: Install AWS CLI v2
+  #   steps:
+  #     - run:
+  #         name: Install AWS CLI v2
+  #         command: |
+  #           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 
-            unzip awscliv2.zip
-            sudo ./aws/install
+  #           unzip awscliv2.zip
+  #           sudo ./aws/install
           
   install_ansible:
     description: Install Ansible
@@ -48,7 +48,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
+            SUCCESS=$(curl --insecure  https://kvdb.io/AyzMFssuwprLTP7GfgLAvK/migration_<< parameters.Workflow_ID >>)
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -156,9 +156,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - install_awscli
-      - run: yum install -y unzip
-      - run: yum install -y tar gzip      
+      - run:
+          name: Install tar utility
+          command: |
+            yum install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -166,7 +167,6 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
-
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -205,14 +205,14 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            pip install awscli
+            # pip install awscli
             apk add --update ansible
       - run:
           name: Configure server
           command: |
             cd .circleci/ansible
             cat inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
+            ansible-playbook -i .circleci/ansible/configure-server.yml .circleci/ansible/inventory.txt
 
       - destroy-environment    
 
@@ -221,8 +221,14 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
-      - install_awscli
-      - run: apt-get install unzip
+      - run: 
+          name: Install aws cli
+          command: |
+            #test
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: Run migrations
           command: |
@@ -234,7 +240,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl https://kvdb.io/${KVDB_BUCKET}/migration_$\{CIRCLE_WORKFLOW_ID:0:7\}  -d '1'          
+              curl https://kvdb.io/AyzMFssuwprLTP7GfgLAvK/migration_$\{CIRCLE_WORKFLOW_ID:0:7\}  -d '1'          
             fi
       - destroy-environment   
       - revert-migrations 
