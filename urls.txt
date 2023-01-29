@@ -1,0 +1,20 @@
+1- Public Url to GitHub repository
+   https://github.com/basmaelgamal/cdond-c3-project
+ ____________________________________________________________________________ 
+2- Public URL for your S3 Bucket 
+   http://udapeople-7febabb.s3-website-us-east-1.amazonaws.com/#/employees
+______________________________________________________________________________
+3- cloudfront url
+   http://d15upoqdjuq9hp.cloudfront.net/#/employees
+_______________________________________________________________________________
+4- endpoint for database 
+   ec2-52-207-208-246.compute-1.amazonaws.com
+________________________________________________________________________________   
+5- url for promesues
+  http://ec2-44-208-24-251.compute-1.amazonaws.com:9090/targets
+__________________________________________________________________________________
+6- url with puplic ip
+   http://44.208.24.251:9090/targets
+__________________________________________________________________________________
+
+
